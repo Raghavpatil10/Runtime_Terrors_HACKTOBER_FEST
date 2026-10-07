@@ -277,7 +277,7 @@ Records that fail the check twice return `"check_status": "Failed"`, `"voucher_t
 
 ## Team Details
 1. Raghav Patil (Leader)
-2. Arayan Jumde
+2. Aryan Jumde
 3. Shamit bundela
 4. Priyanshu Yadav
 
