@@ -176,13 +176,20 @@ Not applicable. The workflow is a fixed pipeline with one bounded retry. The mod
 
 ## 15. Expected Features
 
-- Voucher classification into 28 target categories
-- Double-entry self-check with debit/credit balance, account-fit, and GST-direction rules
-- Correction memory that reuses past accountant corrections as examples
-- Confidence score and risk level for every record
-- Human-in-the-loop review for Uncertain and high-risk records
-- Duplicate-transaction and missing-field detection
-- JSON and Excel export
+- **Voucher classification** into 28 target categories, from one Excel or CSV upload. Each row is processed on its own and returns one voucher type.
+- **Confidence score and risk level** for every record. The score combines the self-check result, agreement with correction memory, and simple anomaly rules such as duplicates or unusual amounts.
+- **Uncertain routing.** Records that fail the self-check twice are marked Uncertain with a low score and placed in the review queue instead of being accepted.
+- **Duplicate and missing-field detection** during preprocessing. Duplicate rows are flagged, and missing required fields such as supplier, amount, or GST are reported before classification.
+- **Human-in-the-loop review workspace.** Flagged and Uncertain records appear first, and the accountant can accept the suggested voucher or correct it.
+- **JSON and Excel export** of all results, including the voucher type, debit and credit entry, confidence, reason, and recommended action.
+
+⭐ **Innovative Feature 1: Correction Memory**
+
+Every time an accountant corrects a voucher label, LedgerMind AI saves that correction in a simple storage table. The table holds three columns: the transaction details, the correct voucher type, and a short note explaining the correction. When a new transaction arrives, the system searches this table for similar past transactions, such as the same supplier name or similar item descriptions. If a match is found, it is added to the AI's prompt as a worked example, for instance: *"Last time, this supplier's bill was a Purchase Return. Consider that here."* The AI then makes its decision with this context, so repeated mistakes are avoided without retraining the model.
+
+⭐ **Innovative Feature 2: Double-Entry Self-Check**
+
+Before a voucher type is accepted, the AI must also write the accounting entry it implies: which accounts are debited and credited, and by how much. A rule-based checker (plain code, no AI) then tests that entry. Debits must equal credits, the accounts must fit the voucher type (for example, a Contra entry touches only cash or bank accounts), and GST must flow in the right direction (input GST on purchases, output GST on sales). If the check fails, the AI receives the specific error and tries once more. If it still fails, the record is marked Uncertain with a low confidence score and sent for human review. The confidence score is therefore earned from the check result rather than guessed by the model.
 
 ---
 
