@@ -3,7 +3,7 @@
 # LedgerMind AI
 ### Explainable AI Accounting Copilot for Intelligent Voucher Classification
 
-> **An AI-powered accounting assistant that understands financial transactions, predicts voucher categories, explains every decision, detects anomalies, and assists accountants with intelligent recommendations using Open-Source LLMs.**
+> **An AI-powered accounting assistant that understands financial transactions, predicts voucher categories, explains every decision, verifies its own entries, and assists accountants with intelligent recommendations using Open-Source LLMs.**
 
 ---
 
@@ -29,9 +29,9 @@ LedgerMind AI is an **Explainable AI Accounting Copilot** that combines accounti
 Instead of acting like a black-box classifier, LedgerMind AI:
 
 - Predicts voucher types
-- Explains every prediction
-- Detects anomalies
-- Validates transaction consistency
+- Writes and verifies the accounting entry behind each prediction
+- Learns from accountant corrections
+- Flags uncertain records for human review
 - Assists accountants with actionable recommendations
 
 ---
@@ -46,13 +46,17 @@ Instead of acting like a black-box classifier, LedgerMind AI:
 
 ✅ Transaction Verification Engine
 
-✅ Risk & Anomaly Detection
+✅ Human-in-the-Loop Review
 
 ✅ Accountant Copilot Workspace
 
-⭐ **Innovative Feature 1** *(Coming Soon)*
+⭐ **Innovative Feature 1: Correction Memory**
 
-⭐ **Innovative Feature 2** *(Coming Soon)*
+Every time an accountant corrects a voucher label, LedgerMind AI saves that correction in a simple storage table. The table holds three columns: the transaction details, the correct voucher type, and a short note explaining the correction. When a new transaction arrives, the system searches this table for similar past transactions, such as the same supplier name or similar item descriptions. If a match is found, it is added to the AI's prompt as a worked example, for instance: *"Last time, this supplier's bill was a Purchase Return. Consider that here."* The AI then makes its decision with this context, so repeated mistakes are avoided without retraining the model.
+
+⭐ **Innovative Feature 2: Double-Entry Self-Check**
+
+Before a voucher type is accepted, the AI must also write the accounting entry it implies: which accounts are debited and credited, and by how much. A rule-based checker (plain code, no AI) then tests that entry. Debits must equal credits, the accounts must fit the voucher type (for example, a Contra entry touches only cash or bank accounts), and GST must flow in the right direction (input GST on purchases, output GST on sales). If the check fails, the AI receives the specific error and tries once more. If it still fails, the record is marked Uncertain with a low confidence score and sent for human review. The confidence score is therefore earned from the check result rather than guessed by the model.
 
 ---
 
@@ -62,25 +66,28 @@ Instead of acting like a black-box classifier, LedgerMind AI:
 Excel Dataset
       │
       ▼
-Data Validation
+Data Validation & Preprocessing
       │
       ▼
-Data Cleaning & Feature Engineering
+Correction Memory Lookup  ◄── Accountant Corrections Store
       │
       ▼
-Hybrid AI Engine
-(Rules + ML + Open-Source LLM)
+LLM Classifier (Open-Source LLM / SLM)
+(Voucher Type + Dr/Cr Entry + Reasoning)
       │
       ▼
-Verification & Risk Analysis
+Double-Entry Self-Check (rule-based)
+      │
+      ├── Passed ──► Confidence & Risk Scoring
+      │
+      └── Failed ──► Retry once with error message ──► Still failing? ──► Mark Uncertain
       │
       ▼
-Accountant Copilot Workspace
+Output (JSON / Excel)
       │
       ▼
-JSON / Excel / Dashboard
+Accountant Review ──► Corrections saved to Memory Store
 ```
-
 ---
 
 # AI Workflow
