@@ -274,3 +274,10 @@ Records that fail the check twice return `"check_status": "Failed"`, `"voucher_t
 | Limited hardware for a 7B model | Use a quantized build; process in batches; fall back to a smaller model for development |
 | Sensitive financial data | Local deployment only; no data is sent to external APIs |
 | Small or noisy correction memory early on | Memory is used only when similarity passes a threshold; the system works without it |
+
+## Team Details
+1. Raghav Patil (Leader)
+2. Arayan Jumde
+3. Shamit bundela
+4. Priyanshu Yadav
+
